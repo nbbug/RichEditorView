@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "RichEditorView"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "RichEditorView"
   s.description  = <<-DESC
                     RichEditorView use WKWebView
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
 
   s.homepage     = "https://github.com/ChengGC/RichEditorView"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
-  s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
+  s.license      = { :type => "MIT", :file => "LICENSE.md" }
   s.author             = { "Chang" => "79795877@qq.com" }
   s.platform     = :ios, "8.0"
 

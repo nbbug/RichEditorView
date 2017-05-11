@@ -108,6 +108,14 @@ open class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, U
             call((d as NSString).integerValue)
         }
     }
+    
+    fileprivate func isSuccessResult(_ result: String)->Bool{
+        if result == "" || result == "0" || result == "false"{
+            return false
+        }else{
+            return true
+        }
+    }
 
     // MARK: Initialization
     
@@ -212,14 +220,14 @@ open class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, U
     /// Whether or not the selection has a type specifically of "Range".
     public func hasRangeSelection(_ call: @escaping (Bool)->Void) {
         runJS("RE.rangeSelectionExists();"){ d in
-            call(d == "true" ? true : false)
+            call(self.isSuccessResult(d))
         }
     }
 
     /// Whether or not the selection has a type specifically of "Range" or "Caret".
     public func hasRangeOrCaretSelection(_ call: @escaping (Bool)->Void) {
         runJS("RE.rangeOrCaretSelectionExists();"){ d in
-            call(d == "true" ? true : false)
+            call(self.isSuccessResult(d))
         }
     }
 
@@ -342,11 +350,10 @@ open class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, U
     /// If there is no result, returns an empty string
     /// - parameter js: The JavaScript string to be run
     
-    public func runJS(_ js: String, successHandler: ((String) -> Swift.Void)? = nil){
+    public func runJS(_ js: String, handler: ((String) -> Swift.Void)? = nil){
         webView.evaluateJavaScript(js) { (result, error) in
-            if let r = result as? String, error == nil{
-                successHandler?(r)
-            }
+            let data = String(describing: result ?? "")
+            handler?(data)
         }
     }
 
