@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import ZLPhotoBrowser
+
 
 class ViewController: UIViewController {
     private var editorView: RichEditorView!
@@ -90,7 +92,43 @@ extension ViewController: RichEditorToolbarDelegate {
     }
     
     func richEditorToolbarInsertImage(_ toolbar: RichEditorToolbar) {
-        toolbar.editor?.insertImage("https://gravatar.com/avatar/696cf5da599733261059de06c4d1fe22", alt: "Gravatar")
+//        toolbar.editor?.insertImage(url: "https://gravatar.com/avatar/696cf5da599733261059de06c4d1fe22", alt: "Gravatar")
+//        let picker = UIImagePickerController()
+//        picker.sourceType = .photoLibrary
+//        picker.delegate = self
+//        self.present(picker, animated: true, completion: nil)
+        
+        self.toolbar.editor?.blur()
+        
+        let p = ZLPhotoActionSheet()
+        p.maxSelectCount = 9
+        p.selectImageBlock = {(imgs, models, origin) in
+//            if imgs.count > 0{
+//                for img in imgs{
+//                    self.toolbar.editor?.insertImage(img: img, alt: "")
+//                }
+//            }
+            
+//            let options: PHContentEditingInputRequestOptions = PHContentEditingInputRequestOptions()
+//            options.canHandleAdjustmentData = {(adjustmeta: PHAdjustmentData) -> Bool in
+//                return true
+//            }
+//
+//            models[0].requestContentEditingInput(with: options, completionHandler: {[unowned self] (contentEditingInput, info) in
+//                let src = contentEditingInput?.fullSizeImageURL?.absoluteString ?? ""
+//                if let a = Util.pathForWKWebViewSandboxBugWithOriginalPath(src){
+//                    self.toolbar.editor?.insertImage(url: a, alt: "img")
+//                }
+//            })
+            
+            
+            for img in imgs{
+                if let path = Util.pathForImage(image: img){
+                    self.toolbar.editor?.insertImage(url: path, alt: "img")
+                }
+            }
+        }
+        p.showPreview(animated: true, sender: self)
     }
     
     func richEditorToolbarInsertLink(_ toolbar: RichEditorToolbar) {
@@ -100,5 +138,25 @@ extension ViewController: RichEditorToolbarDelegate {
                 self.toolbar.editor?.insertLink("http://github.com/cjwirth/RichEditorView", title: "Github Link")
             }
         })
+    }
+}
+
+extension ViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        self.dismiss(animated: true, completion: nil)
+        
+//        if let img = info[UIImagePickerControllerOriginalImage] as? UIImage{
+//            DispatchQueue.main.async(execute: {
+//                self.toolbar.editor?.insertImage(img: img, alt: "")
+//            })
+//        }
+        
+//        if let url = info[UIImagePickerControllerReferenceURL] as? URL{
+//            DispatchQueue.main.async(execute: {
+//                if let a = Util.pathForWKWebViewSandboxBugWithOriginalPath(url.absoluteString){
+//                    self.toolbar.editor?.insertImage(url: a, alt: "")
+//                }
+//            })
+//        }
     }
 }

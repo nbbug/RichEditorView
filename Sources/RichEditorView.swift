@@ -35,6 +35,8 @@ import WebKit
     /// Called when custom actions are called by callbacks in the JS
     /// By default, this method is not used unless called by some custom JS that you add
     @objc optional func richEditor(_ editor: RichEditorView, handle action: String)
+    
+    @objc optional func richEditorViewWasTapped(_ editor: RichEditorView)
 }
 
 /// RichEditorView is a UIView that displays richly styled text, and allows it to be edited in a WYSIWYG fashion.
@@ -238,7 +240,8 @@ open class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, U
     }
     
     public func setFontSize(_ size: Int) {
-        runJS("RE.setFontSize('\(size))px');")
+//        runJS("RE.setFontSize('\(size))px');")
+        runJS("RE.setFontSize('\(size))');")
     }
     
     public func setEditorBackgroundColor(_ color: UIColor) {
@@ -324,9 +327,24 @@ open class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, U
         runJS("RE.setJustifyRight();")
     }
     
-    public func insertImage(_ url: String, alt: String) {
+    public func insertImage(url: String, alt: String) {
         runJS("RE.prepareInsert();")
         runJS("RE.insertImage('\(url.escaped)', '\(alt.escaped)');")
+    }
+    
+    public func insertImage(img: UIImage, alt: String) {
+        insertImage(data: img.uploadData(), alt: alt)
+    }
+    
+    public func insertImage(data: Data, alt: String) {
+        let base64String = data.base64EncodedString(options: Data.Base64EncodingOptions.lineLength64Characters)
+        let s = "data:image/jpeg;base64," + base64String
+        insertImage(url: s, alt: alt)
+    }
+    
+    public func insertEmoji(_ url: String, key: String) {
+        runJS("RE.prepareInsert();")
+        runJS("RE.insertEmoji('\(url.escaped)', '\(key.escaped)');")
     }
     
     public func insertLink(_ href: String, title: String) {
@@ -549,6 +567,13 @@ open class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, U
     /// Called by the UITapGestureRecognizer when the user taps the view.
     /// If we are not already the first responder, focus the editor.
     internal func viewWasTapped() {
+//        if !webView.containsFirstResponder {
+//            let point = tapRecognizer.location(in: webView)
+//            focus(at: point)
+//        }
+        
+        self.delegate?.richEditorViewWasTapped?(self)
+        
         if !webView.containsFirstResponder {
             let point = tapRecognizer.location(in: webView)
             focus(at: point)

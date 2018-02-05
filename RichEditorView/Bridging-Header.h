@@ -6,5 +6,6 @@
 #define RichEditorView_OCContainerHeader_h
 
 #import "CJWWebView+HackishAccessoryHiding.h"
+#import <CommonCrypto/CommonDigest.h>
 
 #endif

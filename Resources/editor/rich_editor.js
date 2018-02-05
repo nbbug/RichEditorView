@@ -226,8 +226,22 @@ RE.insertImage = function(url, alt) {
     img.onload = RE.updateHeight;
 
 //    RE.insertHTML(img.outerHTML);
-    RE.insertHTML(img.outerHTML + "<div><br></div>");
+    RE.insertHTML(img.outerHTML + "<div><br /></div>");
     RE.callback("input");
+    RE.blurFocus();
+};
+
+RE.insertEmoji = function(url, key) {
+    var img = document.createElement('img');
+    img.setAttribute("src", url);
+    img.setAttribute("alt", key);
+    img.setAttribute("emoji", key.slice(1, key.length-1));
+    img.style.width = '12px';
+    img.style.height = '12px';
+    img.onload = RE.updateHeight;
+    
+    RE.insertHTML(img.outerHTML);
+    //    RE.callback("input");
 };
 
 RE.setBlockquote = function() {
@@ -309,8 +323,33 @@ RE.focus = function() {
     RE.editor.focus();
 };
 
+//RE.focusAtPoint = function(x, y) {
+//    var range = document.caretRangeFromPoint(x, y);
+//    var selection = window.getSelection();
+//    selection.removeAllRanges();
+//    selection.addRange(range);
+//    RE.editor.focus();
+//};
+
+RE.focusAtEnd = function() {
+    var range = document.caretRangeFromPoint(RE.editor.offsetLeft + RE.editor.clientWidth - 1, RE.editor.offsetTop + RE.editor.clientHeight - 1);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    RE.editor.focus();
+};
+
 RE.focusAtPoint = function(x, y) {
-    var range = document.caretRangeFromPoint(x, y);
+    var range;
+    if(x > RE.editor.offsetLeft &&
+       x < RE.editor.offsetLeft + RE.editor.clientWidth &&
+       y > RE.editor.offsetTop &&
+       y < RE.editor.offsetTop + RE.editor.clientHeight){
+        range = document.caretRangeFromPoint(x, y);
+    }else{
+        //range = document.caretRangeFromPoint(RE.editor.offsetLeft + 1, RE.editor.offsetTop + 1);
+        range = document.caretRangeFromPoint(RE.editor.offsetLeft + RE.editor.clientWidth - 1, RE.editor.offsetTop + RE.editor.clientHeight - 1);
+    }
     var selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
